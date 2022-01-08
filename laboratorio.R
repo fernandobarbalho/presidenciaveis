@@ -288,7 +288,7 @@ pml_train_model <- pml_train_trabalho[,-1]
 pml_train_model<- janitor::clean_names(pml_train_model)
 
 
-########### decistion tree para todos os elementos
+########### decision tree para todos os elementos
 
 # Create model with ramdom parameters
 control_dt <- trainControl(method="cv")
