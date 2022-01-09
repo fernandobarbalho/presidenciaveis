@@ -10,45 +10,6 @@ library(readr)
 load("~/Github/presidenciaveis/tweets_presidenciaveis.RData")
 
 
-#Função que gera um dataframe com as hashtags associadas aos twittes onde aparecem os candidatos
-analise_hashtags<- function(df_tweets, n=NULL){
-  
-  library(purrr)
-  
-  hashtags<- df_tweets$hashtags
-  
-  
-  keywords<-
-    map_dfr(1:length(hashtags), function(inc){
-      
-      print(inc)
-      if ( !is.na(hashtags[[inc]]) ){
-        print(hashtags[[inc]])
-        map_dfr(1:NROW(hashtags[[inc]]), function(inc_int){
-          print(hashtags[[inc]][inc_int])
-          tibble(hashtag= hashtags[[inc]][inc_int])
-          
-        })
-      }
-    })
-  
-  
-  analise_keywords<-
-    keywords %>%
-    group_by(hashtag) %>%
-    summarise(
-      quantidade = n()
-    )
-  
-  if (!is.null(n)){
-    
-    analise_keywords %>%
-      slice_max(quantidade, n=n)
-    
-    
-  }
-
-}
 
 
 analise_bolsonaro<- analise_hashtags(bolsonaro, n=10)
@@ -58,47 +19,6 @@ analise_ciro<- analise_hashtags(ciro, n=10)
 analise_doria<- analise_hashtags(doria, n=10) 
 
 
-#associação de mensagens positivas, negativas e neutras aos candidatos a uma amostra das mensagens
-
-associa_tipo_mensagem <- function(df_twittes, n, tags_positivas, tags_negativas, usuarios_noticias, tipo=1, nome_arquivo=NULL, delim=","){
-  
-
-  df_trabalho<-
-    df_twittes %>%
-    mutate(tipo_mensagem = case_when(
-      hashtags %in% tags_positivas ~ "positivo",
-      hashtags %in% tags_negativas ~ "negativo",
-      screen_name %in% usuarios_noticias ~ "noticia"
-    )) %>%
-    select(status_id, screen_name, text,tipo_mensagem, hashtags)
-  
-  if (tipo == 1){
-    
-    df_trabalho<-
-    df_trabalho %>%
-      slice_sample(n=n)
-    
-    #seleciona uma amostra das mensagens e sugere as primeiras definições do tipo de mesnagem a partir das hashtags e usuários
-    
-    
-  } else{
-    
-    #seleciona uma amostra das mensagens e sugere as primeiras definições do tipo de mesnagem a partir das hashtags e usuários
-    df_trabalho<-
-      df_trabalho %>%
-      filter(!is.na(tipo_mensagem)) %>%
-      slice_sample(n=n)
-  }
-  
-  
-  if (!is.null(nome_arquivo)){
-    df_trabalho%>%
-      readr::write_delim(nome_arquivo, delim = delim,  )
-  }
- 
-  df_trabalho
-
-}
 
 imprensa<- c("folha", "estadao", "opovo", "@JornalOGlobo")
 
