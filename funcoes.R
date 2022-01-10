@@ -9,9 +9,9 @@ analise_hashtags<- function(.data, n=NULL){
   keywords<-
     map_dfr(1:length(hashtags), function(inc){
       
-      print(inc)
+      #print(inc)
       if ( !is.na(hashtags[[inc]]) ){
-        print(hashtags[[inc]])
+        #print(hashtags[[inc]])
         map_dfr(1:NROW(hashtags[[inc]]), function(inc_int){
           print(hashtags[[inc]][inc_int])
           tibble(hashtag= hashtags[[inc]][inc_int])
@@ -101,7 +101,6 @@ associa_tipo_mensagem <- function(.data, n, tags_positivas, tags_negativas, usua
 processa_tweets<- function(.data){
   .data<- 
     .data %>%
-    #inner_join(bolsonaro) %>%
     select(status_id, screen_name, tipo_mensagem, text) %>%
     unnest_tweets(word,text, strip_url = TRUE)%>%
     dplyr::filter(!str_detect(word,"#"),
@@ -111,7 +110,7 @@ processa_tweets<- function(.data){
   .data$word<- abjutils::rm_accent(.data$word)
   
   palavras_unicas_usuario<- 
-    tidy_tweet %>%
+    .data %>%
     group_by(screen_name, word) %>%
     summarise(
       quantidade = n()
