@@ -13,7 +13,7 @@ analise_hashtags<- function(.data, n=NULL){
       if ( !is.na(hashtags[[inc]]) ){
         #print(hashtags[[inc]])
         map_dfr(1:NROW(hashtags[[inc]]), function(inc_int){
-          print(hashtags[[inc]][inc_int])
+          #print(hashtags[[inc]][inc_int])
           tibble(hashtag= hashtags[[inc]][inc_int])
           
         })
@@ -23,6 +23,7 @@ analise_hashtags<- function(.data, n=NULL){
   
   analise_keywords<-
     keywords %>%
+    mutate(hashtag= str_to_lower(hashtag)) %>%
     group_by(hashtag) %>%
     summarise(
       quantidade = n()
@@ -31,7 +32,7 @@ analise_hashtags<- function(.data, n=NULL){
   if (!is.null(n)){
     
     analise_keywords<-
-    analise_keywords %>%
+      analise_keywords %>%
       slice_max(quantidade, n=n)
     
     
@@ -39,7 +40,7 @@ analise_hashtags<- function(.data, n=NULL){
   
   .data<-analise_keywords
   
-  .data
+  .data 
   
 }
 
@@ -53,8 +54,8 @@ associa_tipo_mensagem <- function(.data, n, tags_positivas, tags_negativas, usua
   .data<-
     .data %>%
     mutate(tipo_mensagem = case_when(
-      hashtags %in% tags_positivas ~ "positivo",
-      hashtags %in% tags_negativas ~ "negativo",
+      tolower(hashtags) %in% tags_positivas ~ "positivo",
+      tolower(hashtags) %in% tags_negativas ~ "negativo",
       screen_name %in% usuarios_noticias ~ "noticia"
     )) %>%
     select(status_id, screen_name, text,tipo_mensagem, hashtags)
@@ -165,12 +166,12 @@ tabela_tf_idf<-  function(.data){
     bind_tf_idf(word, tipo_mensagem, n) %>%
     mutate(word = fct_reorder(word, tf_idf)) %>%
     mutate(tipo_mensagem = factor(tipo_mensagem, 
-                                  levels = c("positivo",
-                                             "negativo",
+                                  levels = c("negativo",
+                                             "positivo",
                                              "noticias")))
   
   graph<-
-  tabela %>% 
+    tabela %>% 
     group_by(tipo_mensagem) %>% 
     top_n(15, tf_idf) %>% 
     ungroup() %>%
@@ -178,17 +179,17 @@ tabela_tf_idf<-  function(.data){
     ggplot(aes(word, tf_idf, fill = tipo_mensagem)) +
     scale_y_continuous(expand = c(0, 0)) +
     geom_col(show.legend = FALSE) +
-    labs(x = NULL, y = "tf-idf") +
+    labs(x = NULL, y = NULL) +
     facet_wrap(~tipo_mensagem, ncol = 3, scales = "free") +
     coord_flip() +
     theme_classic(base_size = 12) +
     labs(fill= "Tipo Mensagem", 
-         title="Term frequency and inverse document frequency (tf-idf)", 
-         subtitle="Top 15 words by tipo mensage",
          x= NULL, 
-         y= "tf-idf") +
-    theme(plot.title = element_text(lineheight=.8, face="bold")) +
-    scale_fill_brewer()  
+         y= NULL) +
+    theme(plot.title = element_text(lineheight=.8, face="bold"),
+          axis.title = element_blank(),
+          axis.text.x = element_blank()) +
+    scale_fill_viridis(discrete = TRUE)  
   
   list(tabela= tabela,graph= graph )
   
@@ -198,40 +199,6 @@ tabela_tf_idf<-  function(.data){
 }
 
 
-###############################Tokenização
-
-
-tokenizacao<- function(){
-  
-  ###########Tokenizing by n-gram
-  
-  positivo_bigrams <- msg_lula_treino_tratado %>%
-    filter(tipo_mensagem == "positivo") %>% 
-    #unnest_tweets(word,text, strip_url = TRUE, n=2)
-    unnest_tokens(bigram, text, token = "ngrams", n = 2)
-  
-  
-  positivo_bigrams_count <- positivo_bigrams %>% 
-    count(bigram, sort = TRUE)
-  
-  library(tidyr)
-  
-  # seperate words
-  bigrams_separated <- positivo_bigrams %>%
-    separate(bigram, c("word1", "word2"), sep = " ")
-  
-  # filter stop words and NA
-  bigrams_filtered <- bigrams_separated %>%
-    filter(!word1 %in% stopword$word) %>%
-    filter(!word2 %in% stopword$word) %>% 
-    filter(!is.na(word1))
-  
-  # new bigram counts:
-  bigram_counts <- bigrams_filtered %>% 
-    count(word1, word2, sort = TRUE)
-  
-  
-}
 
 
 
@@ -294,7 +261,7 @@ grafico_arvore_decisao<-function(.data){
   
   library(rattle)
   fancyRpartPlot(.data$finalModel)
-
+  
 }
 
 

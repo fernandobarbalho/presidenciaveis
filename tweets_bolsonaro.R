@@ -1,26 +1,16 @@
+
 #Para capturar apenas as principais hashtags que citam bolsonaro
 
 analise_bolsonaro<-
   analise_hashtags(bolsonaro,10)
-
-#Para processar os tweets das hashtagas positivas e negativas
-
-tweets_processados_bolsonaro<-
-  associa_tipo_mensagem(bolsonaro, 
-                        n= 3300,
-                        tags_positivas = analise_bolsonaro$hashtag[c(2,3,8,9,10)], 
-                        tags_negativas = analise_bolsonaro$hashtag[c(1,7)],
-                        #usuarios_noticias = imprensa,
-                        tipo =2) %>%
-  processa_tweets()
 
 #Para fazer tf_idf (caminho completo)
 
 tf_idf_bolsonaro<- 
   associa_tipo_mensagem(bolsonaro, 
                         n= 3300,
-                        tags_positivas = analise_bolsonaro$hashtag[c(2,3,8,9,10)], 
-                        tags_negativas = analise_bolsonaro$hashtag[c(1,7)],
+                        tags_positivas = analise_bolsonaro$hashtag[c(2,4,7,8,10)], 
+                        tags_negativas = analise_bolsonaro$hashtag[c(1,6)],
                         #usuarios_noticias = imprensa,
                         tipo =2) %>%
   processa_tweets() %>%
@@ -36,8 +26,8 @@ tf_idf_bolsonaro$graph
 modelo_ml_bolsonaro<-
   associa_tipo_mensagem(bolsonaro, 
                         n= 3300,
-                        tags_positivas = analise_bolsonaro$hashtag[c(2,3,8,9,10)], 
-                        tags_negativas = analise_bolsonaro$hashtag[c(1,7)],
+                        tags_positivas = analise_bolsonaro$hashtag[c(2,4,7,8,10)], 
+                        tags_negativas = analise_bolsonaro$hashtag[c(1,6)],
                         #usuarios_noticias = imprensa,
                         tipo =2) %>%
   processa_tweets()%>%
