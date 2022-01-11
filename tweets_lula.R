@@ -9,7 +9,7 @@ analise_lula<-
 tf_idf_lula<- 
   associa_tipo_mensagem(lula, 
                         n= 3300,
-                        tags_positivas = analise_lula$hashtag[c(2,4,5,9)], 
+                        tags_positivas = analise_lula$hashtag[c(2,4,6,9)], 
                         tags_negativas = analise_lula$hashtag[c(3,10)],
                         #usuarios_noticias = imprensa,
                         tipo =2) %>%
@@ -26,7 +26,7 @@ tf_idf_lula$graph
 modelo_ml_lula<-
   associa_tipo_mensagem(lula, 
                         n= 3300,
-                        tags_positivas = analise_lula$hashtag[c(2,4,5,9)], 
+                        tags_positivas = analise_lula$hashtag[c(2,4,6,9)], 
                         tags_negativas = analise_lula$hashtag[c(3,10)],
                         #usuarios_noticias = imprensa,
                         tipo =2) %>%

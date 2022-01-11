@@ -9,7 +9,7 @@ analise_moro<-
 tf_idf_moro<- 
   associa_tipo_mensagem(moro, 
                         n= 3300,
-                        tags_positivas = analise_moro$hashtag[c(3,5,8,12)], 
+                        tags_positivas = analise_moro$hashtag[c(3,5,8,13)], 
                         tags_negativas = analise_moro$hashtag[c(1,6,7)],
                         #usuarios_noticias = imprensa,
                         tipo =2) %>%
@@ -26,7 +26,7 @@ tf_idf_moro$graph
 modelo_ml_moro<-
   associa_tipo_mensagem(moro, 
                         n= 3300,
-                        tags_positivas = analise_moro$hashtag[c(3,5,8,12)], 
+                        tags_positivas = analise_moro$hashtag[c(3,5,8,13)], 
                         tags_negativas = analise_moro$hashtag[c(1,6,7)],
                         #usuarios_noticias = imprensa,
                         tipo =2) %>%
