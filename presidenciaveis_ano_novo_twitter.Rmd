@@ -294,6 +294,36 @@ A última semana de 2021 foi marcada pela tragédia das enchentes na Bahia. Esse
 No início da manhã do dia 29/12/2021 fiz um levantamento  de até 18000 mensagens de twitter que incluíram o nome dos principais candidatos. A forma de coleta usada, a partir da API livre do twitter, permite capturar mensagens de até aproximadamente sete dias anteriores à requisição dos dados. Só para deixar claro, o objetivo seria ter 18000 mensagens para cada candidato. Na prática isso não chegou a ocorrer já que algumas candidaturas não chegaram a atingir esse número. Logo abaixo há um resumo número de mensagens associadas a princípios aos nomes de cada um dos candidatós e as marcações de data e hora da primeira e última mensagem.
 
 ```{r}
+library(RColorBrewer)
+
+lula$candidato <- "Lula"
+bolsonaro$candidato<- "Bolsonaro"
+moro$candidato <- "Moro"
+ciro$candidato <- "Ciro"
+doria$candidato <- "Doria"
+
+lula  %>%
+  bind_rows(bolsonaro,
+            moro,
+            ciro,
+            doria) %>%
+  mutate(data_postagem = lubridate::date(as.Date(created_at))  ) %>%
+  group_by(candidato, data_postagem) %>%
+  summarise(
+    quantidade = n()
+  ) %>%
+  ggplot() +
+  geom_col(aes(x=data_postagem, y= quantidade, fill= candidato))+
+  theme_light() +
+  scale_fill_brewer(palette = "Accent") +
+  labs(x= NULL, y=NULL)
+
+  
+```
+
+
+
+```{r}
 resumo<- 
   tibble(candidato= "Lula", num_mensagem = NROW(lula), inicio= min(lula$created_at), fim=max(lula$created_at)) %>%
   bind_rows(
@@ -302,6 +332,9 @@ resumo<-
     tibble(candidato= "Ciro", num_mensagem = NROW(ciro), inicio= min(ciro$created_at), fim=max(ciro$created_at)),
     tibble(candidato= "Doria", num_mensagem = NROW(doria), inicio= min(doria$created_at), fim=max(doria$created_at))
   )
+
+
+
 
 library(kableExtra)
 
